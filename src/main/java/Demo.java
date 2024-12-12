@@ -12,10 +12,10 @@ public class Demo {
     static final Customer cs1 = new Customer(1,"Customer 1", "Address 3");
 
     public static void main(String[] args) throws Exception {
-        Storage stg = new Storage();
-        stg.save(List.of(sp1, sp2, cs1, pr1), "src\\main\\resources\\data.csv");
+        CsvStorage stg = new CsvStorage("src\\main\\resources\\data.csv");
+        stg.save(List.of(sp1, sp2, cs1, pr1));
 
-        List<CsvSerializable> ls = stg.load("src\\main\\resources\\data.csv");
+        List<CsvSerializable> ls = stg.load();
         ls.forEach(System.out::println);
     }
 }

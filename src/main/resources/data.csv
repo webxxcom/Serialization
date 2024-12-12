@@ -1,4 +1,4 @@
-ua.nure.cpp.kravchenko.practice4.entity,Supplier,1,Roman,Sladkovicova 12378
-ua.nure.cpp.kravchenko.practice4.entity,Supplier,2,Andrii,Sumskaya Street
-ua.nure.cpp.kravchenko.practice4.entity,Customer,1,Anastasia,Plekhanivska Street 
-ua.nure.cpp.kravchenko.practice4.entity,Product,1,Viktoria,100.1,100
+main.java.entity,Supplier,1,Supplier 1,Address 1
+main.java.entity,Supplier,2,Supplier 2,Address 2
+main.java.entity,Customer,1,Customer 1,Address 3
+main.java.entity,Product,1,Product 1,100.1,100

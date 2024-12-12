@@ -1,6 +1,7 @@
+package test.java;
+
 import main.java.storage.*;
 import org.junit.Test;
-import test.java.Person;
 
 import java.io.*;
 import java.util.*;
@@ -103,7 +104,8 @@ public class StorageTest {
         }
     }
 
-    private static final String filesRoot = "src\\test\\resources\\";
+    private static final String TEST_RESOURCES = "src\\test\\resources\\";
+    private static final String PACKAGE_NAME = StorageTest.class.getPackageName();
     private final Square sq1 = new Square(20);
     private final Square sq2 = new Square(4.4);
     private final Square sq3 = new Square(0);
@@ -114,13 +116,12 @@ public class StorageTest {
 
     @Test
     public void EmptyClassStorageCollectionTest() throws IOException {
-     final String path = filesRoot + "emptyData";
-        System.out.println(Square.class.getName());
+        final String path = TEST_RESOURCES + "emptyData";
+        CsvStorage sg = new CsvStorage(path);
 
-        Storage sg = new Storage();
-        List<CsvSerializable> ls = sg.load(path);
+        List<CsvSerializable> ls = sg.load();
         assertThrows(NullPointerException.class, ()
-                -> sg.save(null, path));
+                -> sg.save(null));
 
         assertTrue(ls.isEmpty());
 
@@ -132,18 +133,18 @@ public class StorageTest {
 
     @Test
     public void EmptyFileTest() throws IOException {
-        Storage sg = new Storage();
-        List<CsvSerializable> ls = sg.load(filesRoot + "emptyData");
+        CsvStorage sg = new CsvStorage(TEST_RESOURCES + "emptyData");
+        List<CsvSerializable> ls = sg.load();
         assertTrue(ls.isEmpty());
     }
 
     @Test
     public void SaveEmptyListTest() throws IOException {
-        final String fileName = filesRoot + "emptyListData";
+        final String fileName = TEST_RESOURCES + "emptyListData";
         List<CsvSerializable> expected = new ArrayList<>();  // Empty list
 
-        Storage sg = new Storage();
-        sg.save(expected, fileName);
+        CsvStorage sg = new CsvStorage(fileName);
+        sg.save(expected);
 
         // Ensure the file is empty after saving an empty list
         try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
@@ -151,32 +152,32 @@ public class StorageTest {
         }
 
         // Load the file and check if it's still an empty list
-        List<CsvSerializable> loadedList = sg.load(fileName);
+        List<CsvSerializable> loadedList = sg.load();
         assertTrue("The loaded list should be empty", loadedList.isEmpty());
     }
 
     @Test
     public void SaveAndLoadSingleObjectTest() throws IOException {
-        final String fileName = filesRoot + "singleObjectData";
+        final String fileName = TEST_RESOURCES + "singleObjectData";
         List<CsvSerializable> expected = List.of(sq1);  // Single object (Square)
 
-        Storage sg = new Storage();
-        sg.save(expected, fileName);
+        CsvStorage sg = new CsvStorage(fileName);
+        sg.save(expected);
 
-        List<CsvSerializable> loadedList = sg.load(fileName);
+        List<CsvSerializable> loadedList = sg.load();
         assertEquals("The loaded list should contain exactly one object", 1, loadedList.size());
         assertEquals("The loaded object should match the saved object", sq1, loadedList.get(0));
     }
 
     @Test
     public void SaveAndLoadMultipleObjectTypesTest() throws IOException {
-        final String fileName = filesRoot + "multipleTypesData";
+        final String fileName = TEST_RESOURCES + "multipleTypesData";
         List<CsvSerializable> expected = List.of(sq1, rc1, ps1);  // Square, Rectangle, Person
 
-        Storage sg = new Storage();
-        sg.save(expected, fileName);
+        CsvStorage sg = new CsvStorage(fileName);
+        sg.save(expected);
 
-        List<CsvSerializable> loadedList = sg.load(fileName);
+        List<CsvSerializable> loadedList = sg.load();
         assertEquals("The loaded list should contain exactly 3 objects", 3, loadedList.size());
         assertTrue("The loaded list should contain a Square", loadedList.contains(sq1));
         assertTrue("The loaded list should contain a Rectangle", loadedList.contains(rc1));
@@ -185,13 +186,13 @@ public class StorageTest {
 
     @Test
     public void SaveAndLoadWithMixedObjectTypesTest() throws IOException {
-        final String fileName = filesRoot + "mixedTypesData";
+        final String fileName = TEST_RESOURCES + "mixedTypesData";
         List<CsvSerializable> expected = List.of(sq1, ps1, rc2, sq2, ps2, sq3, rc1);  // Square, Person, Rectangle
 
-        Storage sg = new Storage();
-        sg.save(expected, fileName);
+        CsvStorage sg = new CsvStorage(fileName);
+        sg.save(expected);
 
-        List<CsvSerializable> loadedList = sg.load(fileName);
+        List<CsvSerializable> loadedList = sg.load();
         assertEquals("The loaded list should contain exactly 7 objects", expected.size(), loadedList.size());
         assertTrue("The loaded list should contain a Square", loadedList.contains(sq1));
         assertTrue("The loaded list should contain a Person", loadedList.contains(ps1));
@@ -200,37 +201,37 @@ public class StorageTest {
 
     @Test
     public void SaveAndLoadSpecialCharactersTest() throws IOException {
-        final String fileName = filesRoot + "specialCharsData";
+        final String fileName = TEST_RESOURCES + "specialCharsData";
         Person personWithSpecialChars = new Person("John-Doe", 30);
 
         List<CsvSerializable> expected = List.of(personWithSpecialChars);
 
-        Storage sg = new Storage();
-        sg.save(expected, fileName);
+        CsvStorage sg = new CsvStorage(fileName);
+        sg.save(expected);
 
-        List<CsvSerializable> loadedList = sg.load(fileName);
+        List<CsvSerializable> loadedList = sg.load();
         assertEquals("The loaded list should contain exactly one object", 1, loadedList.size());
         assertEquals("The loaded object should match the saved object", personWithSpecialChars, loadedList.get(0));
     }
 
     @Test
     public void SaveAndLoadWithNullFieldsTest() throws IOException {
-        final String fileName = filesRoot + "nullFieldsData";
+        final String fileName = TEST_RESOURCES + "nullFieldsData";
         Person personWithNullName = new Person(null, 25);  // Name is null
 
         List<CsvSerializable> expected = List.of(personWithNullName);
 
-        Storage sg = new Storage();
-        sg.save(expected, fileName);
+        CsvStorage sg = new CsvStorage(fileName);
+        sg.save(expected);
 
-        List<CsvSerializable> loadedList = sg.load(fileName);
+        List<CsvSerializable> loadedList = sg.load();
         assertEquals("The loaded list should contain exactly one object", 1, loadedList.size());
-        assertEquals("The loaded object should match the saved object", personWithNullName, loadedList.get(0));
+        assertEquals("The loaded object should match the saved object", personWithNullName, loadedList.getFirst());
     }
 
     @Test
     public void ThrowsExceptionForMissingFieldsTest() throws IOException{
-        final String fileName = filesRoot + "missingFieldsData";
+        final String fileName = TEST_RESOURCES + "missingFieldsData";
 
         // Create a malformed CSV string with missing fields
         String malformedData = Person.class.getPackageName() + ",Person,Roman";  // Missing age
@@ -238,21 +239,20 @@ public class StorageTest {
             outputStream.write(malformedData.getBytes());
         }
 
-        Storage sg = new Storage();
-        assertThrows(IllegalCsvFormat.class, () -> sg.load(fileName));
+        CsvStorage sg = new CsvStorage(fileName);
+        assertThrows(IllegalCsvFormat.class, sg::load);
     }
 
     @Test
     public void ThrowsExceptionForIncorrectFileFormat() throws IOException {
-        final String fileName = filesRoot + "incorrectFormatData";
+        final String fileName = TEST_RESOURCES + "incorrectFormatData";
 
         try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
-            String malformedData = ",StorageTest$Square,20,20\n,StorageTest$Rectangle,data,20";
-            outputStream.write(malformedData.getBytes());
+            outputStream.write((PACKAGE_NAME + ",StorageTest$Square,20,20\n"+PACKAGE_NAME +",StorageTest$Rectangle,data,20").getBytes());
         }
 
-        Storage sg = new Storage();
-        assertThrows(IllegalCsvFormat.class, () -> sg.load(fileName));
+        CsvStorage sg = new CsvStorage(fileName);
+        assertThrows(IllegalCsvFormat.class, sg::load);
     }
 
     @Test
@@ -271,14 +271,14 @@ public class StorageTest {
                 return new Point(Integer.parseInt(vals[0]), Integer.parseInt(vals[1]));
             }
         }
-        final String fileName = filesRoot + "noParameterLessConstructor";
+        final String fileName = TEST_RESOURCES + "noParameterLessConstructor";
 
         try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
-            outputStream.write(",StorageTest$1Point,10,10".getBytes());
+            outputStream.write((PACKAGE_NAME + ",StorageTest$1Point,10,10").getBytes());
         }
 
-        Storage sg = new Storage();
-        assertThrows(NoParameterlessConstructorException.class, () -> sg.load(fileName));
+        CsvStorage sg = new CsvStorage(fileName);
+        assertThrows(NoParameterlessConstructorException.class, sg::load);
     }
 
     @Test
@@ -302,37 +302,37 @@ public class StorageTest {
                 return null;
             }
         }
-        final String fileName = filesRoot + "noParameterLessConstructor";
+        final String fileName = TEST_RESOURCES + "noParameterLessConstructor";
 
         try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
-            outputStream.write(",StorageTest$1Point,10,10".getBytes());
+            outputStream.write((PACKAGE_NAME + ",StorageTest$1Book,10,10").getBytes());
         }
 
-        Storage sg = new Storage();
-        assertThrows(NoParameterlessConstructorException.class, () -> sg.load(fileName));
+        CsvStorage sg = new CsvStorage(fileName);
+        assertThrows(NoParameterlessConstructorException.class, sg::load);
     }
 
     @Test
     public void ThrowsExceptionForInvalidPackage() throws IOException{
-        final String fileName = filesRoot + "invalidPackage";
+        final String fileName = TEST_RESOURCES + "invalidPackage";
 
         try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
             outputStream.write(",Square,10".getBytes());
         }
 
-        Storage sg = new Storage();
-        assertThrows(IllegalArgumentException.class, () -> sg.load(fileName));
+        CsvStorage sg = new CsvStorage(fileName);
+        assertThrows(IllegalArgumentException.class, sg::load);
     }
 
     @Test
     public void ThrowsExceptionForInvalidClassName() throws IOException{
-        final String fileName = filesRoot + "invalidName";
+        final String fileName = TEST_RESOURCES + "invalidName";
 
         try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
             outputStream.write(",Squaare,10".getBytes());
         }
 
-        Storage sg = new Storage();
-        assertThrows(IllegalArgumentException.class, () -> sg.load(fileName));
+        CsvStorage sg = new CsvStorage(fileName);
+        assertThrows(IllegalArgumentException.class, sg::load);
     }
 }

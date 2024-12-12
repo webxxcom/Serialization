@@ -1,7 +1,7 @@
-,StorageTest$Square,20.0
+test.java,StorageTest$Square,20.0
 test.java,Person,Person 1,10
-,StorageTest$Rectangle,0.0,0.0
-,StorageTest$Square,4.4
+test.java,StorageTest$Rectangle,0.0,0.0
+test.java,StorageTest$Square,4.4
 test.java,Person,Person 2,1000
-,StorageTest$Square,0.0
-,StorageTest$Rectangle,10.0,20.0
+test.java,StorageTest$Square,0.0
+test.java,StorageTest$Rectangle,10.0,20.0

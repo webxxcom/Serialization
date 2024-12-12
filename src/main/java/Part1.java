@@ -4,7 +4,7 @@ package main.java;
 import main.java.entity.Entities;
 import main.java.entity.Entity;
 import main.java.storage.CsvSerializable;
-import main.java.storage.Storage;
+import main.java.storage.CsvStorage;
 import main.java.storage.TextStorage;
 
 import java.io.*;
@@ -15,11 +15,10 @@ public class Part1 {
 	private static void writeDataIntoFile(String fileName) throws IOException{
 		try (FileOutputStream fos = new FileOutputStream(fileName)) {
 			String entPackage = "main.java.entity";
-			fos.write((
+			fos.write((entPackage + ",Product,1,Viktoria,100.1,100\n" +
+					entPackage + ",Supplier,2,Andrii,Sumskaya Street\n" +
 					entPackage + ",Supplier,1,Roman,Sladkovicova 12378\n" +
-							entPackage + ",Supplier,2,Andrii,Sumskaya Street\n" +
-							entPackage + ",Customer,1,Anastasia,Plekhanivska Street \n" +
-							entPackage + ",Product,1,Viktoria,100.1,100"
+					entPackage + ",Customer,1,Anastasia,Plekhanivska Street"
 			).getBytes());
 		}
 	}
@@ -39,10 +38,10 @@ public class Part1 {
 		writeDataIntoFile(inputFile);
 
 		//Get a storage instance
-		TextStorage<CsvSerializable> storage = new Storage();
+		TextStorage<CsvSerializable> storage = new CsvStorage(inputFile, outputFile);
 
 		// Get a list of the Domain objects from the external storage
-		List<CsvSerializable> ls = storage.load(inputFile);
+		List<CsvSerializable> ls = storage.load();
 
 		//Show the obtained data
 		System.out.println("The obtained data:");
@@ -50,17 +49,17 @@ public class Part1 {
 
 		//Sort the data
 		List<Entity> sortedList = new ArrayList<>(ls.stream().map(s -> ((Entity) s)).toList());
-		sortedList.sort(new Entities.NameAndIdComparator());
+		sortedList.sort(new Entities.NameComparator());
 
 		//Show the sorted data
 		System.out.println("\nSorted data:");
 		sortedList.forEach(System.out::println);
 
 		//Save sorted data into external storage
-		storage.save(sortedList.stream().map(s -> (CsvSerializable) s).toList(), outputFile);
+		storage.save(sortedList.stream().map(s -> (CsvSerializable) s).toList());
 
 		//Show the raw text from the source and destination storages
-		System.out.println("\nThe initial data:");
+		System.out.println("\nThe initial data in the " + outputFile.substring(outputFile.lastIndexOf('\\') + 1) + ":");
 		outputFileData(inputFile);
 
 		System.out.println("\nThe sorted written data into a file:");
